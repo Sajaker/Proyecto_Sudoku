@@ -41,13 +41,13 @@ public class Sudoku9x9 {
 
     public boolean esValido(int fila, int columna, int numero) {
         for (int i = 0; i < 9; i++) {
-            if (tablero[fila][i] == numero) {
+            if (i != columna && tablero[fila][i] == numero) {
                 return false;
             }
         }
 
         for (int i = 0; i < 9; i++) {
-            if (tablero[i][columna] == numero) {
+            if (i != fila && tablero[i][columna] == numero) {
                 return false;
             }
         }
@@ -57,7 +57,8 @@ public class Sudoku9x9 {
 
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                if (tablero[inicioFila + i][inicioColumna + j] == numero) {
+                if((inicioFila + i != fila || inicioColumna + j != columna) &&
+                tablero [inicioFila + i][inicioColumna + j] == numero) {
                     return false;
                 }
             }

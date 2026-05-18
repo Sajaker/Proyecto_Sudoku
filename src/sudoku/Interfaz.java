@@ -23,6 +23,10 @@ public class Interfaz extends JFrame {
     private static final Color SUCCESS = new Color(46, 174, 96);
     private static final Color DANGER = new Color(214, 64, 69);
     private static final Color WARNING = new Color(243, 156, 18);
+    //Agregamos colores para ver si esta bueno o malo el numero
+    private static final Color BG_VALIDO = new Color(210, 255, 210);
+    private static final Color BG_INVALIDO = new Color(255, 210, 210);
+
 
     private static final Color BG_MAIN = new Color(234, 237, 244);
     private static final Color BG_HEADER = PRIMARY;
@@ -190,16 +194,19 @@ public class Interfaz extends JFrame {
             @Override
             public void keyTyped(KeyEvent e) {
                 char c = e.getKeyChar();
-                if (c < '1' || c > '9') {
+
+                if(c < '1' || c > '9'){
                     e.consume();
                     return;
                 }
-                if (!celda.getText().isEmpty()) {
+                if((!celda.getText().isEmpty())){
                     celda.setText("");
                 }
+                SwingUtilities.invokeLater(()-> {
+                    validarCeldaEnTiempoReal(fila, col, celda);
+                });
             }
         });
-
         return celda;
     }
 
@@ -366,6 +373,38 @@ public class Interfaz extends JFrame {
     private void actualizarEstado(String mensaje, Color color) {
         estadoLabel.setText(mensaje);
         estadoLabel.setForeground(color);
+    }
+
+    private void validarCeldaEnTiempoReal(int fila, int col, JTextField celda){
+        int[][] tableroTemporal = new int[9][9];
+        for(int i = 0; i < 9; i++){
+            for(int j = 0; j < 9; j++){
+                String texto = celdas[i][j].getText().trim();
+
+                if(!texto.isEmpty()){
+                    tableroTemporal[i][j] = Integer.parseInt(texto);
+                }else{
+                    tableroTemporal[i][j] = 0;
+                }
+            }
+        }
+        String textoCelda = celda.getText().trim();
+        if(textoCelda.isEmpty()){
+            boolean bloqueOscuro = ((fila/3) + (col/3)) % 2==1;
+            celda.setBackground(bloqueOscuro ? BG_CELDA_ALT : BG_CELDA);
+            return;
+        }
+        int numero = Integer.parseInt(textoCelda);
+        tableroTemporal[fila][col] = 0;
+        Sudoku9x9 sudoku = new Sudoku9x9(tableroTemporal);
+        boolean valido = sudoku.esValido(fila, col, numero);
+        tableroTemporal[fila][col] = numero;
+
+        if(valido){
+            celda.setBackground(BG_VALIDO);
+        }else{
+            celda.setBackground(BG_INVALIDO);
+        }
     }
 
     private void resolver() {
