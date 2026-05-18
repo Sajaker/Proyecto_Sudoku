@@ -1,0 +1,67 @@
+// Función principal recursiva que resuelve el tablero
+FUNCIÓN resolverSudoku(tablero):
+
+    // 1. Buscar la próxima celda vacía (representada por 0)
+    celda_vacia = buscarCeldaVacia(tablero)
+
+    // 2. Comprobar el CASO BASE
+    SI celda_vacia NO EXISTE ENTONCES:
+        RETORNAR Verdadero // ¡El Sudoku está resuelto!
+
+    // Extraer las coordenadas de la celda vacía encontrada
+    fila = celda_vacia.fila
+    columna = celda_vacia.columna
+
+    // 3. Probar las decisiones posibles (números del 1 al 9)
+    PARA numero DESDE 1 HASTA 9 HACER:
+
+        // 4. Realizar VALIDACIONES
+        SI esValido(tablero, fila, columna, numero) ES Verdadero ENTONCES:
+
+            // Tomar la decisión: Colocar el número en el tablero
+            tablero[fila][columna] = numero
+
+            // Llamada recursiva: Intentar resolver el resto del tablero con esta nueva decisión
+            SI resolverSudoku(tablero) ES Verdadero ENTONCES:
+                RETORNAR Verdadero // Propagar la señal de éxito hacia arriba
+
+            // 5. BACKTRACKING (Retroceso)
+            // Si la llamada recursiva retornó Falso, significa que esta decisión llevó a un error
+            tablero[fila][columna] = 0 // Deshacer la decisión (vaciar la celda)
+
+        FIN SI
+        // Si no es válido, el bucle continúa e intenta con el siguiente número
+
+    FIN PARA
+
+    // Si probamos del 1 al 9 y ninguno funcionó, retornamos Falso para forzar a la llamada anterior a retroceder
+    RETORNAR Falso
+
+FIN FUNCIÓN
+
+-------------------------------------------------------------------------
+// Función auxiliar para validar las restricciones
+FUNCIÓN esValido(tablero, fila, columna, numero):
+
+    // Revisar fila
+    PARA i DESDE 0 HASTA 8 HACER:
+        SI tablero[fila][i] IGUAL A numero ENTONCES:
+            RETORNAR Falso
+
+    // Revisar columna
+    PARA i DESDE 0 HASTA 8 HACER:
+        SI tablero[i][columna] IGUAL A numero ENTONCES:
+            RETORNAR Falso
+
+    // Revisar subcuadro 3x3
+    inicioFilaSubcuadro = (fila DIV 3) * 3
+    inicioColumnaSubcuadro = (columna DIV 3) * 3
+
+    PARA i DESDE 0 HASTA 2 HACER:
+        PARA j DESDE 0 HASTA 2 HACER:
+            SI tablero[inicioFilaSubcuadro + i][inicioColumnaSubcuadro + j] IGUAL A numero ENTONCES:
+                RETORNAR Falso
+
+    // Si pasa todas las validaciones, el número es seguro para colocar
+    RETORNAR Verdadero
+FIN FUNCIÓN
