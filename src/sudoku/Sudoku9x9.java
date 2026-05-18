@@ -1,5 +1,10 @@
 package sudoku;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+
 public class Sudoku9x9 {
     private int[][] tablero;
     private boolean[][] esInicial;
@@ -118,5 +123,50 @@ public class Sudoku9x9 {
             }
             System.out.println();
         }
+    }
+
+    public boolean generarSudoku() {
+        for(int fila = 0; fila < 9; fila++) {
+            for(int columna = 0; columna < 9; columna++) {
+                if(this.tablero[fila][columna] == 0) {
+                    List<Integer> numeros = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9);
+
+                    Collections.shuffle(numeros);
+
+                    for(int numero : numeros) {
+                        this.tablero[fila][columna] = numero;
+                        if(esValido(fila, columna, numero)) {
+                            if(generarSudoku()) {
+                                return true;
+                            }
+                        }
+                        this.tablero[fila][columna] = 0;
+                    }
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    public void eliminarCasillas(int cantidad) {
+        Random random = new Random();
+        int eliminadas = 0;
+
+        while(eliminadas < cantidad) {
+            int fila = random.nextInt(9);
+            int columna = random.nextInt(9);
+
+            if(tablero[fila][columna] != 0) {
+                tablero[fila][columna] = 0;
+                eliminadas++;
+            }
+        }
+    }
+    public int[][] crearTableroAleatorio(){
+        this.tablero = new int[9][9];
+        generarSudoku();
+        eliminarCasillas(40);
+
+        return this.tablero;
     }
 }

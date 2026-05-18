@@ -54,6 +54,7 @@ public class Interfaz extends JFrame {
         super("Sudoku 9x9 - Backtracking");
         this.celdas = new JTextField[9][9];
         this.tableroInicial = new int[9][9];
+        this.sudoku = new Sudoku9x9();
         this.resuelto = false;
         inicializarUI();
     }
@@ -244,11 +245,12 @@ public class Interfaz extends JFrame {
     }
 
     private JPanel crearPanelBotones() {
-        JPanel panel = new JPanel(new GridLayout(1, 4, 10, 0));
+        JPanel panel = new JPanel(new GridLayout(1, 5, 10, 0));
         panel.setOpaque(false);
         panel.setBorder(new EmptyBorder(4, 0, 0, 0));
 
         panel.add(crearBoton("Resolver", SUCCESS, "▶"));
+        panel.add(crearBoton("Aleatorio", PRIMARY, "★"));
         panel.add(crearBoton("Cargar Ejemplo", ACCENT, "◈"));
         panel.add(crearBoton("Limpiar", WARNING, "↺"));
         panel.add(crearBoton("Tablero Vacío", DANGER, "✕"));
@@ -337,6 +339,8 @@ public class Interfaz extends JFrame {
             case "Resolver":
                 boton.addActionListener(e -> resolver());
                 break;
+            case "Aleatorio":
+                boton.addActionListener(e-> generarAleatorio());
             case "Limpiar":
                 boton.addActionListener(e -> limpiar());
                 break;
@@ -511,6 +515,26 @@ public class Interfaz extends JFrame {
             }
         }
         actualizarEstado("Listo — Ingresa los números o carga un ejemplo", TEXT_MUTED);
+    }
+
+    private void generarAleatorio(){
+        limpiar();
+        int[][] tablero = sudoku.crearTableroAleatorio();
+        for (int fila = 0; fila < 9; fila++) {
+            for (int col = 0; col < 9; col++) {
+                if(tablero[fila][col] != 0){
+                    celdas[fila][col].setText(String.valueOf(tablero[fila][col]));
+                celdas[fila][col].setEditable(false);
+            celdas[fila][col].setForeground(TEXT_INICIAL);
+        celdas[fila][col].setBackground(BG_CELDA_INICIAL);
+                    }else{
+                    celdas[fila][col].setEditable(true);
+                    boolean bloqueOscuro = ((fila / 3) + (col / 3)) % 2 == 1;
+                    celdas[fila][col].setBackground(bloqueOscuro ? BG_CELDA_ALT : BG_CELDA);
+                }
+            }
+        }
+        actualizarEstado("Sudoku aleatorio generado", PRIMARY);
     }
 
     private void cargarEjemplo() {
