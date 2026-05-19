@@ -134,8 +134,8 @@ public class Sudoku9x9 {
                     Collections.shuffle(numeros);
 
                     for(int numero : numeros) {
-                        this.tablero[fila][columna] = numero;
-                        if(esValido(fila, columna, numero)) {
+                        if(esValido(fila, columna, numero)){
+                            this.tablero[fila][columna] = numero;
                             if(generarSudoku()) {
                                 return true;
                             }
